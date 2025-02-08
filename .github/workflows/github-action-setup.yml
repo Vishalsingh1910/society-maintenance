@@ -1,0 +1,42 @@
+name: Build Flutter App
+
+on:
+  repository_dispatch: # This allows external API calls to trigger the build
+    types: [trigger_build]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.0.3 # Adjust for your Flutter version
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Send Email with Build Link
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "New Build is Ready!"
+          body: "Download your new build: https://your-cdn-url.com/app-release.apk"
+          to: "your-email@example.com"
+          from: CI/CD Bot

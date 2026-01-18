@@ -1,0 +1,22 @@
+# User role enum for role-based access control (RBAC)
+# Defines the four primary roles in the society maintenance system
+
+enum: UserRole
+
+# Available roles in the system
+values:
+  # Administrator with full system access
+  # Can manage users, roles, announcements, complaints, and all system features
+  - admin
+  
+  # Standard resident of the society
+  # Can view announcements, submit complaints, manage their own profile
+  - resident
+  
+  # Security guard at the gate
+  # Can manage visitor check-in/out, vehicle entry/exit
+  - guard
+  
+  # Maintenance staff member
+  # Can view and update assigned complaints/maintenance tasks
+  - staff

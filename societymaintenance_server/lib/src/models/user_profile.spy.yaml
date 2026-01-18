@@ -1,0 +1,34 @@
+# User profile table
+# Stores extended profile information for authenticated users
+# Automatically created on first login with default 'resident' role
+
+class: UserProfile
+
+# Store in database
+table: user_profile
+
+# Fields
+fields:
+  # Reference to the Serverpod auth user (UUID from serverpod_auth_core_user)
+  # This links the profile to the authenticated user
+  userId: UuidValue
+  
+  # Full name of the user
+  fullName: String
+  
+  # Optional phone number
+  phone: String?
+  
+  # User's role in the system (default: resident)
+  role: UserRole
+  
+  # Timestamp when the profile was created
+  createdAt: DateTime
+
+# Indexes for performance
+indexes:
+  # Unique index on userId to ensure one profile per user
+  # Also speeds up lookups by userId
+  user_profile_user_id_idx:
+    fields: userId
+    unique: true

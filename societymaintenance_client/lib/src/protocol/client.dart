@@ -16,9 +16,12 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
-import 'package:societymaintenance_client/src/protocol/greetings/greeting.dart'
+import 'package:societymaintenance_client/src/protocol/user_profile.dart'
     as _i5;
-import 'protocol.dart' as _i6;
+import 'package:societymaintenance_client/src/protocol/user_role.dart' as _i6;
+import 'package:societymaintenance_client/src/protocol/greetings/greeting.dart'
+    as _i7;
+import 'protocol.dart' as _i8;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -234,6 +237,100 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
   );
 }
 
+/// Admin-only endpoint for user management and role assignment.
+/// All methods require admin role.
+/// {@category Endpoint}
+class EndpointAdmin extends _i2.EndpointRef {
+  EndpointAdmin(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'admin';
+
+  /// Lists all user profiles in the system.
+  /// Returns profiles ordered by creation date (newest first).
+  ///
+  /// Admin only.
+  /// Requires authentication and admin role.
+  _i3.Future<List<_i5.UserProfile>> listUsers() =>
+      caller.callServerEndpoint<List<_i5.UserProfile>>(
+        'admin',
+        'listUsers',
+        {},
+      );
+
+  /// Sets a user's role.
+  /// Allows admins to promote/demote users to different roles.
+  ///
+  /// Parameters:
+  /// - userId: The UUID of the user whose role should be changed
+  /// - newRole: The new role to assign (admin, resident, guard, or staff)
+  ///
+  /// Returns the updated user profile.
+  ///
+  /// Admin only.
+  /// Requires authentication and admin role.
+  _i3.Future<_i5.UserProfile> setUserRole(
+    String userId,
+    _i6.UserRole newRole,
+  ) => caller.callServerEndpoint<_i5.UserProfile>(
+    'admin',
+    'setUserRole',
+    {
+      'userId': userId,
+      'newRole': newRole,
+    },
+  );
+}
+
+/// Endpoint for user profile management.
+/// Provides APIs for users to get and update their own profiles.
+/// {@category Endpoint}
+class EndpointProfile extends _i2.EndpointRef {
+  EndpointProfile(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'profile';
+
+  /// Gets the current user's profile.
+  /// Automatically creates a profile with default values if it doesn't exist.
+  ///
+  /// Default values on auto-create:
+  /// - role: resident
+  /// - fullName: empty string (user should update)
+  /// - createdAt: current timestamp
+  ///
+  /// Returns the user's profile.
+  /// Requires authentication.
+  _i3.Future<_i5.UserProfile> getMyProfile() =>
+      caller.callServerEndpoint<_i5.UserProfile>(
+        'profile',
+        'getMyProfile',
+        {},
+      );
+
+  /// Updates the current user's profile.
+  /// Users can only update their own fullName and phone.
+  /// Role cannot be changed through this endpoint (admin-only operation).
+  ///
+  /// Parameters:
+  /// - fullName: The user's full name
+  /// - phone: Optional phone number
+  ///
+  /// Returns the updated profile.
+  /// Requires authentication.
+  _i3.Future<_i5.UserProfile> updateMyProfile(
+    String fullName,
+    String? phone,
+  ) => caller.callServerEndpoint<_i5.UserProfile>(
+    'profile',
+    'updateMyProfile',
+    {
+      'fullName': fullName,
+      'phone': phone,
+    },
+  );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -244,8 +341,8 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i5.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i5.Greeting>(
+  _i3.Future<_i7.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i7.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -283,7 +380,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i6.Protocol(),
+         _i8.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -294,6 +391,8 @@ class Client extends _i2.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    admin = EndpointAdmin(this);
+    profile = EndpointProfile(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -301,6 +400,10 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointEmailIdp emailIdp;
 
   late final EndpointJwtRefresh jwtRefresh;
+
+  late final EndpointAdmin admin;
+
+  late final EndpointProfile profile;
 
   late final EndpointGreeting greeting;
 
@@ -310,6 +413,8 @@ class Client extends _i2.ServerpodClientShared {
   Map<String, _i2.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
+    'admin': admin,
+    'profile': profile,
     'greeting': greeting,
   };
 

@@ -8,5 +8,11 @@ emailIdp:
   - finishPasswordReset:
 jwtRefresh:
   - refreshAccessToken:
+admin:
+  - listUsers:
+  - setUserRole:
+profile:
+  - getMyProfile:
+  - updateMyProfile:
 greeting:
   - hello:

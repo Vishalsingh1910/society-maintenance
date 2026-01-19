@@ -1,0 +1,33 @@
+# AnnouncementRead table
+# Tracks which users have read which announcements
+# Only creates records when user actually opens/reads an announcement
+# This enables efficient read/unread status tracking per user
+
+class: AnnouncementRead
+
+# Store in database
+table: announcement_read
+
+# Fields
+fields:
+  # Reference to the announcement that was read
+  announcementId: int
+  
+  # Reference to the user who read the announcement
+  # Links to serverpod_auth_core_user UUID
+  userId: UuidValue
+  
+  # Timestamp when the announcement was marked as read
+  readAt: DateTime
+
+# Indexes for performance and data integrity
+indexes:
+  # Unique composite index to ensure one user can't mark same announcement read multiple times
+  # Also speeds up queries checking if specific user read specific announcement
+  announcement_read_unique_idx:
+    fields: announcementId, userId
+    unique: true
+  
+  # Index on userId for efficient queries of all announcements read by a user
+  announcement_read_user_id_idx:
+    fields: userId

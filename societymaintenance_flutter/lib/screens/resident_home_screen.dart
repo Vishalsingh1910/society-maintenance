@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'announcements_list_screen.dart';
 
 /// Resident home screen for standard society members
 /// Provides access to announcements, complaint submission, and personal dashboard
@@ -46,8 +47,11 @@ class ResidentHomeScreen extends StatelessWidget {
                     subtitle: 'View notices',
                     color: Colors.blue,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Announcements - Coming Soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AnnouncementsListScreen(),
+                        ),
                       );
                     },
                   ),

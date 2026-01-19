@@ -11,15 +11,19 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'greetings/greeting.dart' as _i2;
-import 'user_profile.dart' as _i3;
-import 'user_role.dart' as _i4;
+import 'announcement.dart' as _i2;
+import 'announcement_read.dart' as _i3;
+import 'greetings/greeting.dart' as _i4;
+import 'user_profile.dart' as _i5;
+import 'user_role.dart' as _i6;
 import 'package:societymaintenance_client/src/protocol/user_profile.dart'
-    as _i5;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i6;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i7;
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+    as _i8;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i9;
+export 'announcement.dart';
+export 'announcement_read.dart';
 export 'greetings/greeting.dart';
 export 'user_profile.dart';
 export 'user_role.dart';
@@ -59,42 +63,68 @@ class Protocol extends _i1.SerializationManager {
       }
     }
 
-    if (t == _i2.Greeting) {
-      return _i2.Greeting.fromJson(data) as T;
+    if (t == _i2.Announcement) {
+      return _i2.Announcement.fromJson(data) as T;
     }
-    if (t == _i3.UserProfile) {
-      return _i3.UserProfile.fromJson(data) as T;
+    if (t == _i3.AnnouncementRead) {
+      return _i3.AnnouncementRead.fromJson(data) as T;
     }
-    if (t == _i4.UserRole) {
-      return _i4.UserRole.fromJson(data) as T;
+    if (t == _i4.Greeting) {
+      return _i4.Greeting.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i2.Greeting?>()) {
-      return (data != null ? _i2.Greeting.fromJson(data) : null) as T;
+    if (t == _i5.UserProfile) {
+      return _i5.UserProfile.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i3.UserProfile?>()) {
-      return (data != null ? _i3.UserProfile.fromJson(data) : null) as T;
+    if (t == _i6.UserRole) {
+      return _i6.UserRole.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i4.UserRole?>()) {
-      return (data != null ? _i4.UserRole.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i2.Announcement?>()) {
+      return (data != null ? _i2.Announcement.fromJson(data) : null) as T;
     }
-    if (t == List<_i5.UserProfile>) {
-      return (data as List).map((e) => deserialize<_i5.UserProfile>(e)).toList()
+    if (t == _i1.getType<_i3.AnnouncementRead?>()) {
+      return (data != null ? _i3.AnnouncementRead.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i4.Greeting?>()) {
+      return (data != null ? _i4.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i5.UserProfile?>()) {
+      return (data != null ? _i5.UserProfile.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.UserRole?>()) {
+      return (data != null ? _i6.UserRole.fromJson(data) : null) as T;
+    }
+    if (t == List<_i7.UserProfile>) {
+      return (data as List).map((e) => deserialize<_i7.UserProfile>(e)).toList()
+          as T;
+    }
+    if (t == List<Map<String, dynamic>>) {
+      return (data as List)
+              .map((e) => deserialize<Map<String, dynamic>>(e))
+              .toList()
+          as T;
+    }
+    if (t == Map<String, dynamic>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
+          )
           as T;
     }
     try {
-      return _i6.Protocol().deserialize<T>(data, t);
+      return _i8.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i7.Protocol().deserialize<T>(data, t);
+      return _i9.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i2.Greeting => 'Greeting',
-      _i3.UserProfile => 'UserProfile',
-      _i4.UserRole => 'UserRole',
+      _i2.Announcement => 'Announcement',
+      _i3.AnnouncementRead => 'AnnouncementRead',
+      _i4.Greeting => 'Greeting',
+      _i5.UserProfile => 'UserProfile',
+      _i6.UserRole => 'UserRole',
       _ => null,
     };
   }
@@ -112,18 +142,22 @@ class Protocol extends _i1.SerializationManager {
     }
 
     switch (data) {
-      case _i2.Greeting():
+      case _i2.Announcement():
+        return 'Announcement';
+      case _i3.AnnouncementRead():
+        return 'AnnouncementRead';
+      case _i4.Greeting():
         return 'Greeting';
-      case _i3.UserProfile():
+      case _i5.UserProfile():
         return 'UserProfile';
-      case _i4.UserRole():
+      case _i6.UserRole():
         return 'UserRole';
     }
-    className = _i6.Protocol().getClassNameForObject(data);
+    className = _i8.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i7.Protocol().getClassNameForObject(data);
+    className = _i9.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -136,22 +170,28 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'Announcement') {
+      return deserialize<_i2.Announcement>(data['data']);
+    }
+    if (dataClassName == 'AnnouncementRead') {
+      return deserialize<_i3.AnnouncementRead>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i2.Greeting>(data['data']);
+      return deserialize<_i4.Greeting>(data['data']);
     }
     if (dataClassName == 'UserProfile') {
-      return deserialize<_i3.UserProfile>(data['data']);
+      return deserialize<_i5.UserProfile>(data['data']);
     }
     if (dataClassName == 'UserRole') {
-      return deserialize<_i4.UserRole>(data['data']);
+      return deserialize<_i6.UserRole>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i6.Protocol().deserializeByClassName(data);
+      return _i8.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i7.Protocol().deserializeByClassName(data);
+      return _i9.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -166,10 +206,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i6.Protocol().mapRecordToJson(record);
+      return _i8.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i7.Protocol().mapRecordToJson(record);
+      return _i9.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }

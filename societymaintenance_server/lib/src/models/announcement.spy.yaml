@@ -1,0 +1,33 @@
+# Announcement table
+# Stores announcements created by admins and broadcast to all residents
+# Supports optional file attachments for images/documents
+
+class: Announcement
+
+# Store in database
+table: announcement
+
+# Fields
+fields:
+  # Announcement title/headline
+  title: String
+  
+  # Full announcement description/body
+  body: String
+  
+  # Reference to the admin user who created this announcement
+  # Links to serverpod_auth_core_user UUID
+  createdByUserId: UuidValue
+  
+  # Timestamp when the announcement was created
+  createdAt: DateTime
+  
+  # Optional URL to an attached file (image, PDF, etc.)
+  # Can be used for notices, circulars, event posters, etc.
+  attachmentUrl: String?
+
+# Indexes for performance
+indexes:
+  # Index on createdAt for efficient sorting (latest-first)
+  announcement_created_at_idx:
+    fields: createdAt

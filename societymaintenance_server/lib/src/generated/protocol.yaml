@@ -11,6 +11,13 @@ jwtRefresh:
 admin:
   - listUsers:
   - setUserRole:
+announcement:
+  - createAnnouncement:
+  - listAnnouncements:
+  - getAnnouncementDetails:
+  - markAnnouncementRead:
+  - getUnreadCount:
+  - deleteAnnouncement:
 profile:
   - getMyProfile:
   - updateMyProfile:

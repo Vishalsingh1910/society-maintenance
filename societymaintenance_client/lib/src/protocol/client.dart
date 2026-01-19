@@ -19,9 +19,11 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:societymaintenance_client/src/protocol/user_profile.dart'
     as _i5;
 import 'package:societymaintenance_client/src/protocol/user_role.dart' as _i6;
-import 'package:societymaintenance_client/src/protocol/greetings/greeting.dart'
+import 'package:societymaintenance_client/src/protocol/announcement.dart'
     as _i7;
-import 'protocol.dart' as _i8;
+import 'package:societymaintenance_client/src/protocol/greetings/greeting.dart'
+    as _i8;
+import 'protocol.dart' as _i9;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -282,6 +284,125 @@ class EndpointAdmin extends _i2.EndpointRef {
   );
 }
 
+/// Endpoint for announcement management with RBAC protection.
+/// Provides APIs for admins to create announcements and for all users to view them.
+/// {@category Endpoint}
+class EndpointAnnouncement extends _i2.EndpointRef {
+  EndpointAnnouncement(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'announcement';
+
+  /// Creates a new announcement (Admin only).
+  ///
+  /// Parameters:
+  /// - title: Announcement headline
+  /// - body: Full announcement description
+  /// - attachmentUrl: Optional URL to attached file (image, PDF, etc.)
+  ///
+  /// Returns the created announcement.
+  ///
+  /// Requires authentication and admin role.
+  _i3.Future<_i7.Announcement> createAnnouncement(
+    String title,
+    String body,
+    String? attachmentUrl,
+  ) => caller.callServerEndpoint<_i7.Announcement>(
+    'announcement',
+    'createAnnouncement',
+    {
+      'title': title,
+      'body': body,
+      'attachmentUrl': attachmentUrl,
+    },
+  );
+
+  /// Lists announcements with read/unread status for the current user.
+  /// Returns announcements sorted by creation date (newest first).
+  ///
+  /// Parameters:
+  /// - limit: Maximum number of announcements to return (default: 20, max: 100)
+  /// - offset: Number of announcements to skip for pagination (default: 0)
+  ///
+  /// Returns a list of maps containing:
+  /// - 'announcement': Announcement object
+  /// - 'isRead': boolean indicating if current user has read it
+  ///
+  /// Requires authentication.
+  _i3.Future<List<Map<String, dynamic>>> listAnnouncements({
+    required int limit,
+    required int offset,
+  }) => caller.callServerEndpoint<List<Map<String, dynamic>>>(
+    'announcement',
+    'listAnnouncements',
+    {
+      'limit': limit,
+      'offset': offset,
+    },
+  );
+
+  /// Gets details of a single announcement with read status.
+  ///
+  /// Parameters:
+  /// - announcementId: ID of the announcement to retrieve
+  ///
+  /// Returns a map containing:
+  /// - 'announcement': Announcement object
+  /// - 'isRead': boolean indicating if current user has read it
+  ///
+  /// Throws exception if announcement not found.
+  /// Requires authentication.
+  _i3.Future<Map<String, dynamic>> getAnnouncementDetails(int announcementId) =>
+      caller.callServerEndpoint<Map<String, dynamic>>(
+        'announcement',
+        'getAnnouncementDetails',
+        {'announcementId': announcementId},
+      );
+
+  /// Marks an announcement as read for the current user.
+  /// This operation is idempotent - calling it multiple times has no additional effect.
+  ///
+  /// Parameters:
+  /// - announcementId: ID of the announcement to mark as read
+  ///
+  /// Returns true if successfully marked as read (or already read).
+  /// Throws exception if announcement not found.
+  /// Requires authentication.
+  _i3.Future<bool> markAnnouncementRead(int announcementId) =>
+      caller.callServerEndpoint<bool>(
+        'announcement',
+        'markAnnouncementRead',
+        {'announcementId': announcementId},
+      );
+
+  /// Gets the count of unread announcements for the current user.
+  /// Useful for displaying badge counts in the UI.
+  ///
+  /// Returns the number of unread announcements.
+  /// Requires authentication.
+  _i3.Future<int> getUnreadCount() => caller.callServerEndpoint<int>(
+    'announcement',
+    'getUnreadCount',
+    {},
+  );
+
+  /// Deletes an announcement (Admin only, optional for MVP).
+  /// Also deletes all associated read records.
+  ///
+  /// Parameters:
+  /// - announcementId: ID of the announcement to delete
+  ///
+  /// Returns true if successfully deleted.
+  /// Throws exception if announcement not found.
+  /// Requires authentication and admin role.
+  _i3.Future<bool> deleteAnnouncement(int announcementId) =>
+      caller.callServerEndpoint<bool>(
+        'announcement',
+        'deleteAnnouncement',
+        {'announcementId': announcementId},
+      );
+}
+
 /// Endpoint for user profile management.
 /// Provides APIs for users to get and update their own profiles.
 /// {@category Endpoint}
@@ -341,8 +462,8 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i7.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i7.Greeting>(
+  _i3.Future<_i8.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i8.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -380,7 +501,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i8.Protocol(),
+         _i9.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -392,6 +513,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     admin = EndpointAdmin(this);
+    announcement = EndpointAnnouncement(this);
     profile = EndpointProfile(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
@@ -402,6 +524,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointJwtRefresh jwtRefresh;
 
   late final EndpointAdmin admin;
+
+  late final EndpointAnnouncement announcement;
 
   late final EndpointProfile profile;
 
@@ -414,6 +538,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'admin': admin,
+    'announcement': announcement,
     'profile': profile,
     'greeting': greeting,
   };

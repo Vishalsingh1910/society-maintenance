@@ -14,13 +14,14 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../endpoints/admin_endpoint.dart' as _i4;
-import '../endpoints/profile_endpoint.dart' as _i5;
-import '../greetings/greeting_endpoint.dart' as _i6;
-import 'package:societymaintenance_server/src/generated/user_role.dart' as _i7;
+import '../endpoints/announcement_endpoint.dart' as _i5;
+import '../endpoints/profile_endpoint.dart' as _i6;
+import '../greetings/greeting_endpoint.dart' as _i7;
+import 'package:societymaintenance_server/src/generated/user_role.dart' as _i8;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i8;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i9;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i10;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -44,13 +45,19 @@ class Endpoints extends _i1.EndpointDispatch {
           'admin',
           null,
         ),
-      'profile': _i5.ProfileEndpoint()
+      'announcement': _i5.AnnouncementEndpoint()
+        ..initialize(
+          server,
+          'announcement',
+          null,
+        ),
+      'profile': _i6.ProfileEndpoint()
         ..initialize(
           server,
           'profile',
           null,
         ),
-      'greeting': _i6.GreetingEndpoint()
+      'greeting': _i7.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -275,7 +282,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'newRole': _i1.ParameterDescription(
               name: 'newRole',
-              type: _i1.getType<_i7.UserRole>(),
+              type: _i1.getType<_i8.UserRole>(),
               nullable: false,
             ),
           },
@@ -291,6 +298,135 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['announcement'] = _i1.EndpointConnector(
+      name: 'announcement',
+      endpoint: endpoints['announcement']!,
+      methodConnectors: {
+        'createAnnouncement': _i1.MethodConnector(
+          name: 'createAnnouncement',
+          params: {
+            'title': _i1.ParameterDescription(
+              name: 'title',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'body': _i1.ParameterDescription(
+              name: 'body',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'attachmentUrl': _i1.ParameterDescription(
+              name: 'attachmentUrl',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .createAnnouncement(
+                    session,
+                    params['title'],
+                    params['body'],
+                    params['attachmentUrl'],
+                  ),
+        ),
+        'listAnnouncements': _i1.MethodConnector(
+          name: 'listAnnouncements',
+          params: {
+            'limit': _i1.ParameterDescription(
+              name: 'limit',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'offset': _i1.ParameterDescription(
+              name: 'offset',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .listAnnouncements(
+                    session,
+                    limit: params['limit'],
+                    offset: params['offset'],
+                  ),
+        ),
+        'getAnnouncementDetails': _i1.MethodConnector(
+          name: 'getAnnouncementDetails',
+          params: {
+            'announcementId': _i1.ParameterDescription(
+              name: 'announcementId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .getAnnouncementDetails(
+                    session,
+                    params['announcementId'],
+                  ),
+        ),
+        'markAnnouncementRead': _i1.MethodConnector(
+          name: 'markAnnouncementRead',
+          params: {
+            'announcementId': _i1.ParameterDescription(
+              name: 'announcementId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .markAnnouncementRead(
+                    session,
+                    params['announcementId'],
+                  ),
+        ),
+        'getUnreadCount': _i1.MethodConnector(
+          name: 'getUnreadCount',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .getUnreadCount(session),
+        ),
+        'deleteAnnouncement': _i1.MethodConnector(
+          name: 'deleteAnnouncement',
+          params: {
+            'announcementId': _i1.ParameterDescription(
+              name: 'announcementId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['announcement'] as _i5.AnnouncementEndpoint)
+                  .deleteAnnouncement(
+                    session,
+                    params['announcementId'],
+                  ),
+        ),
+      },
+    );
     connectors['profile'] = _i1.EndpointConnector(
       name: 'profile',
       endpoint: endpoints['profile']!,
@@ -302,7 +438,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['profile'] as _i5.ProfileEndpoint)
+              ) async => (endpoints['profile'] as _i6.ProfileEndpoint)
                   .getMyProfile(session),
         ),
         'updateMyProfile': _i1.MethodConnector(
@@ -324,7 +460,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['profile'] as _i5.ProfileEndpoint).updateMyProfile(
+                  (endpoints['profile'] as _i6.ProfileEndpoint).updateMyProfile(
                     session,
                     params['fullName'],
                     params['phone'],
@@ -349,16 +485,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i7.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i8.Endpoints()
+    modules['serverpod_auth_idp'] = _i9.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i9.Endpoints()
+    modules['serverpod_auth_core'] = _i10.Endpoints()
       ..initializeEndpoints(server);
   }
 }

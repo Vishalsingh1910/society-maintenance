@@ -16,11 +16,15 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i3;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
-import 'greetings/greeting.dart' as _i5;
-import 'user_profile.dart' as _i6;
-import 'user_role.dart' as _i7;
+import 'announcement.dart' as _i5;
+import 'announcement_read.dart' as _i6;
+import 'greetings/greeting.dart' as _i7;
+import 'user_profile.dart' as _i8;
+import 'user_role.dart' as _i9;
 import 'package:societymaintenance_server/src/generated/user_profile.dart'
-    as _i8;
+    as _i10;
+export 'announcement.dart';
+export 'announcement_read.dart';
 export 'greetings/greeting.dart';
 export 'user_profile.dart';
 export 'user_role.dart';
@@ -33,6 +37,161 @@ class Protocol extends _i1.SerializationManagerServer {
   static final Protocol _instance = Protocol._();
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
+    _i2.TableDefinition(
+      name: 'announcement',
+      dartName: 'Announcement',
+      schema: 'public',
+      module: 'societymaintenance',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'announcement_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'title',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'body',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdByUserId',
+          columnType: _i2.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'attachmentUrl',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'announcement_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'announcement_created_at_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'createdAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'announcement_read',
+      dartName: 'AnnouncementRead',
+      schema: 'public',
+      module: 'societymaintenance',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'announcement_read_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'announcementId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue',
+        ),
+        _i2.ColumnDefinition(
+          name: 'readAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'announcement_read_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'announcement_read_unique_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'announcementId',
+            ),
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'announcement_read_user_id_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     _i2.TableDefinition(
       name: 'user_profile',
       dartName: 'UserProfile',
@@ -140,26 +299,52 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
 
-    if (t == _i5.Greeting) {
-      return _i5.Greeting.fromJson(data) as T;
+    if (t == _i5.Announcement) {
+      return _i5.Announcement.fromJson(data) as T;
     }
-    if (t == _i6.UserProfile) {
-      return _i6.UserProfile.fromJson(data) as T;
+    if (t == _i6.AnnouncementRead) {
+      return _i6.AnnouncementRead.fromJson(data) as T;
     }
-    if (t == _i7.UserRole) {
-      return _i7.UserRole.fromJson(data) as T;
+    if (t == _i7.Greeting) {
+      return _i7.Greeting.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.Greeting?>()) {
-      return (data != null ? _i5.Greeting.fromJson(data) : null) as T;
+    if (t == _i8.UserProfile) {
+      return _i8.UserProfile.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i6.UserProfile?>()) {
-      return (data != null ? _i6.UserProfile.fromJson(data) : null) as T;
+    if (t == _i9.UserRole) {
+      return _i9.UserRole.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i7.UserRole?>()) {
-      return (data != null ? _i7.UserRole.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i5.Announcement?>()) {
+      return (data != null ? _i5.Announcement.fromJson(data) : null) as T;
     }
-    if (t == List<_i8.UserProfile>) {
-      return (data as List).map((e) => deserialize<_i8.UserProfile>(e)).toList()
+    if (t == _i1.getType<_i6.AnnouncementRead?>()) {
+      return (data != null ? _i6.AnnouncementRead.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i7.Greeting?>()) {
+      return (data != null ? _i7.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i8.UserProfile?>()) {
+      return (data != null ? _i8.UserProfile.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i9.UserRole?>()) {
+      return (data != null ? _i9.UserRole.fromJson(data) : null) as T;
+    }
+    if (t == List<_i10.UserProfile>) {
+      return (data as List)
+              .map((e) => deserialize<_i10.UserProfile>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<Map<String, dynamic>>) {
+      return (data as List)
+              .map((e) => deserialize<Map<String, dynamic>>(e))
+              .toList()
+          as T;
+    }
+    if (t == Map<String, dynamic>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<dynamic>(v)),
+          )
           as T;
     }
     try {
@@ -176,9 +361,11 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.Greeting => 'Greeting',
-      _i6.UserProfile => 'UserProfile',
-      _i7.UserRole => 'UserRole',
+      _i5.Announcement => 'Announcement',
+      _i6.AnnouncementRead => 'AnnouncementRead',
+      _i7.Greeting => 'Greeting',
+      _i8.UserProfile => 'UserProfile',
+      _i9.UserRole => 'UserRole',
       _ => null,
     };
   }
@@ -196,11 +383,15 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.Greeting():
+      case _i5.Announcement():
+        return 'Announcement';
+      case _i6.AnnouncementRead():
+        return 'AnnouncementRead';
+      case _i7.Greeting():
         return 'Greeting';
-      case _i6.UserProfile():
+      case _i8.UserProfile():
         return 'UserProfile';
-      case _i7.UserRole():
+      case _i9.UserRole():
         return 'UserRole';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -224,14 +415,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'Announcement') {
+      return deserialize<_i5.Announcement>(data['data']);
+    }
+    if (dataClassName == 'AnnouncementRead') {
+      return deserialize<_i6.AnnouncementRead>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i5.Greeting>(data['data']);
+      return deserialize<_i7.Greeting>(data['data']);
     }
     if (dataClassName == 'UserProfile') {
-      return deserialize<_i6.UserProfile>(data['data']);
+      return deserialize<_i8.UserProfile>(data['data']);
     }
     if (dataClassName == 'UserRole') {
-      return deserialize<_i7.UserRole>(data['data']);
+      return deserialize<_i9.UserRole>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -269,8 +466,12 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
     switch (t) {
-      case _i6.UserProfile:
-        return _i6.UserProfile.t;
+      case _i5.Announcement:
+        return _i5.Announcement.t;
+      case _i6.AnnouncementRead:
+        return _i6.AnnouncementRead.t;
+      case _i8.UserProfile:
+        return _i8.UserProfile.t;
     }
     return null;
   }

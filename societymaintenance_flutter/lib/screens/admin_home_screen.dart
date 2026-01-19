@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'announcements_list_screen.dart';
 
 /// Admin home screen with full system access
 /// Provides access to user management, announcements, complaints, and all system features
@@ -59,9 +60,11 @@ class AdminHomeScreen extends StatelessWidget {
                     subtitle: 'Create & manage',
                     color: Colors.orange,
                     onTap: () {
-                      // TODO: Navigate to announcements
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Announcements - Coming Soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AnnouncementsListScreen(),
+                        ),
                       );
                     },
                   ),

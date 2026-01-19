@@ -5,13 +5,13 @@ import '../generated/protocol.dart';
 /// Provides business logic for creating, listing, and tracking announcements.
 class AnnouncementService {
   /// Creates a new announcement (admin only).
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated as admin)
   /// - title: Announcement headline
   /// - body: Full announcement description
   /// - attachmentUrl: Optional URL to attached file
-  /// 
+  ///
   /// Returns the created announcement.
   static Future<Announcement> createAnnouncement(
     Session session, {
@@ -20,7 +20,7 @@ class AnnouncementService {
     String? attachmentUrl,
   }) async {
     // Get authenticated user ID
-    final authInfo = await session.authenticated;
+    final authInfo = session.authenticated;
     if (authInfo == null) {
       throw Exception('User not authenticated');
     }
@@ -38,12 +38,12 @@ class AnnouncementService {
 
   /// Lists announcements with read status for the current user.
   /// Returns announcements sorted by creation date (newest first).
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated)
   /// - limit: Maximum number of announcements to return (default: 20)
   /// - offset: Number of announcements to skip for pagination (default: 0)
-  /// 
+  ///
   /// Returns a list of maps containing announcement and isRead status.
   static Future<List<Map<String, dynamic>>> listAnnouncementsWithReadStatus(
     Session session, {
@@ -51,7 +51,7 @@ class AnnouncementService {
     int offset = 0,
   }) async {
     // Get authenticated user ID
-    final authInfo = await session.authenticated;
+    final authInfo = session.authenticated;
     if (authInfo == null) {
       throw Exception('User not authenticated');
     }
@@ -71,9 +71,9 @@ class AnnouncementService {
     for (final announcement in announcements) {
       final readRecord = await AnnouncementRead.db.findFirstRow(
         session,
-        where: (t) => 
-          (t.announcementId.equals(announcement.id!)) & 
-          (t.userId.equals(userId)),
+        where: (t) =>
+            (t.announcementId.equals(announcement.id!)) &
+            (t.userId.equals(userId)),
       );
 
       result.add({
@@ -86,11 +86,11 @@ class AnnouncementService {
   }
 
   /// Gets a single announcement with read status for the current user.
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated)
   /// - announcementId: ID of the announcement to retrieve
-  /// 
+  ///
   /// Returns a map containing announcement and isRead status.
   /// Throws exception if announcement not found.
   static Future<Map<String, dynamic>> getAnnouncementWithReadStatus(
@@ -98,14 +98,17 @@ class AnnouncementService {
     int announcementId,
   ) async {
     // Get authenticated user ID
-    final authInfo = await session.authenticated;
+    final authInfo = session.authenticated;
     if (authInfo == null) {
       throw Exception('User not authenticated');
     }
     final userId = UuidValue.fromString(authInfo.authId);
 
     // Get announcement
-    final announcement = await Announcement.db.findById(session, announcementId);
+    final announcement = await Announcement.db.findById(
+      session,
+      announcementId,
+    );
     if (announcement == null) {
       throw Exception('Announcement not found');
     }
@@ -113,9 +116,8 @@ class AnnouncementService {
     // Check if user has read it
     final readRecord = await AnnouncementRead.db.findFirstRow(
       session,
-      where: (t) => 
-        (t.announcementId.equals(announcementId)) & 
-        (t.userId.equals(userId)),
+      where: (t) =>
+          (t.announcementId.equals(announcementId)) & (t.userId.equals(userId)),
     );
 
     return {
@@ -126,25 +128,28 @@ class AnnouncementService {
 
   /// Marks an announcement as read for the current user.
   /// This operation is idempotent - calling it multiple times has no additional effect.
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated)
   /// - announcementId: ID of the announcement to mark as read
-  /// 
+  ///
   /// Returns true if successfully marked as read (or already read).
   static Future<bool> markAnnouncementAsRead(
     Session session,
     int announcementId,
   ) async {
     // Get authenticated user ID
-    final authInfo = await session.authenticated;
+    final authInfo = session.authenticated;
     if (authInfo == null) {
       throw Exception('User not authenticated');
     }
     final userId = UuidValue.fromString(authInfo.authId);
 
     // Check if announcement exists
-    final announcement = await Announcement.db.findById(session, announcementId);
+    final announcement = await Announcement.db.findById(
+      session,
+      announcementId,
+    );
     if (announcement == null) {
       throw Exception('Announcement not found');
     }
@@ -152,9 +157,8 @@ class AnnouncementService {
     // Check if already read
     final existingRead = await AnnouncementRead.db.findFirstRow(
       session,
-      where: (t) => 
-        (t.announcementId.equals(announcementId)) & 
-        (t.userId.equals(userId)),
+      where: (t) =>
+          (t.announcementId.equals(announcementId)) & (t.userId.equals(userId)),
     );
 
     // If already read, return true (idempotent)
@@ -175,14 +179,14 @@ class AnnouncementService {
 
   /// Gets the count of unread announcements for the current user.
   /// Useful for displaying badge counts in the UI.
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated)
-  /// 
+  ///
   /// Returns the number of unread announcements.
   static Future<int> getUnreadCount(Session session) async {
     // Get authenticated user ID
-    final authInfo = await session.authenticated;
+    final authInfo = session.authenticated;
     if (authInfo == null) {
       throw Exception('User not authenticated');
     }
@@ -202,18 +206,21 @@ class AnnouncementService {
 
   /// Deletes an announcement (admin only, optional for MVP).
   /// Also deletes all associated read records.
-  /// 
+  ///
   /// Parameters:
   /// - session: Current session (must be authenticated as admin)
   /// - announcementId: ID of the announcement to delete
-  /// 
+  ///
   /// Returns true if successfully deleted.
   static Future<bool> deleteAnnouncement(
     Session session,
     int announcementId,
   ) async {
     // Check if announcement exists
-    final announcement = await Announcement.db.findById(session, announcementId);
+    final announcement = await Announcement.db.findById(
+      session,
+      announcementId,
+    );
     if (announcement == null) {
       throw Exception('Announcement not found');
     }

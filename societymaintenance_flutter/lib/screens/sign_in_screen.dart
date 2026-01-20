@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-
 import '../main.dart';
+import 'custom_auth_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   final Widget child;
@@ -37,11 +37,6 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return _isSignedIn
         ? widget.child
-        : Center(
-            child: SignInWidget(
-              client: client,
-              onAuthenticated: () {},
-            ),
-          );
+        : const CustomAuthScreen();
   }
 }

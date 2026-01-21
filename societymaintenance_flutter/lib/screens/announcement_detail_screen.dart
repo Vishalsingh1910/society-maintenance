@@ -5,9 +5,6 @@ import 'package:societymaintenance_client/societymaintenance_client.dart';
 import '../services/announcement_service.dart';
 import '../services/profile_service.dart';
 
-/// Screen displaying full announcement details
-/// Automatically marks announcement as read when opened
-/// Admins can delete announcements from this screen
 class AnnouncementDetailScreen extends StatefulWidget {
   final int announcementId;
 
@@ -17,7 +14,8 @@ class AnnouncementDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<AnnouncementDetailScreen> createState() => _AnnouncementDetailScreenState();
+  State<AnnouncementDetailScreen> createState() =>
+      _AnnouncementDetailScreenState();
 }
 
 class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
@@ -92,7 +90,9 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Announcement'),
-        content: const Text('Are you sure you want to delete this announcement? This action cannot be undone.'),
+        content: const Text(
+          'Are you sure you want to delete this announcement? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

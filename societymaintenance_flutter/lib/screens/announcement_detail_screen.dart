@@ -115,7 +115,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Announcement deleted successfully')),
         );
-        Navigator.pop(context, true); // Return true to indicate deletion
+        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {

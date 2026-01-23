@@ -232,7 +232,6 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
             ),
           ),
 
-          // Attachment (if present)
           if (_announcement!.attachmentUrl != null) ...[
             const SizedBox(height: 24),
             const Divider(),

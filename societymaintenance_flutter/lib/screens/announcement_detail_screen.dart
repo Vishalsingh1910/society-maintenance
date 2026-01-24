@@ -207,7 +207,6 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
           ),
           const SizedBox(height: 8),
 
-          // Date
           Row(
             children: [
               Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
